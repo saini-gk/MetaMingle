@@ -39,4 +39,4 @@ client.on('messageCreate', message => {
   }  
 });
 
-client.login('MTIwMDcwMjc3OTkyNTIwMDk2OA.G8iOq6.n9BK5LTbj_ZLXOUk7GSgKzexARc7lkB7l3JTsE');
+client.login(YOUR_BOT_TOKEN_HERE');
