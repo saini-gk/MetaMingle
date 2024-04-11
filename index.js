@@ -9,38 +9,50 @@ const client = new Client({
 
 const prefix = '!';
 
-// Simulated database (replace with an actual database)
-const database = {
-  // Example of storing command permissions
-  permissions: {
-    'rules': ['ADMINISTRATOR', 'MODERATOR'],
-    'kick': ['ADMINISTRATOR'],
-    // Add more commands and their required permissions as needed
-  }
-};
-
 // Command handler
 const commands = {
-  'rules': {
-    permission: 'USER', // Default permission
-    execute: message => {
-      const embed = new MessageEmbed()
-        .setTitle('Server Rules')
-        .setDescription('Here are the server rules:')
-        .addField('1. Be respectful', 'Be respectful to other members.')
-        .addField('2. No spam', 'Do not spam in the server.')
-        .addField('3. No NSFW content', 'Keep the server safe for everyone.')
-        .setColor('#0099ff');
-      message.reply({ embeds: [embed] });
-    }
+  'rules': message => {
+    const embed = new MessageEmbed()
+      .setTitle('Server Rules')
+      .setDescription('Here are the server rules:')
+      .addField('1. Be respectful', 'Be respectful to other members.')
+      .addField('2. No spam', 'Do not spam in the server.')
+      .addField('3. No NSFW content', 'Keep the server safe for everyone.')
+      .setColor('#0099ff');
+    message.reply({ embeds: [embed] });
   },
-  'kick': {
-    permission: 'ADMINISTRATOR',
-    execute: message => {
-      // Implementation of kick command
-    }
+  'hello': message => {
+    message.reply("Hi 😃 This is SAINI's Bot");
   },
-  // Add more commands here
+  'gm': message => {
+    message.reply("Good Morning 🌅");
+  },
+  'gn': message => {
+    message.reply("Good Night 🌃");
+  },
+  'ga': message => {
+    message.reply("Good Afternoon");
+  },
+  'hru': message => {
+    message.reply("I'm good! What about you?");
+  },
+  'bye': message => {
+    message.reply("Bye! Have a good day");
+  },
+  'help': message => {
+    const embed = new MessageEmbed()
+      .setTitle('Bot Commands')
+      .setDescription('Here are the available commands:')
+      .addField('!rules', 'Display server rules')
+      .addField('!hello', 'Say hello to the bot')
+      .addField('!gm', 'Wish good morning')
+      .addField('!gn', 'Wish good night')
+      .addField('!ga', 'Wish good afternoon')
+      .addField('!hru', 'Check how the bot is doing')
+      .addField('!bye', 'Bid farewell')
+      .setColor('#0099ff');
+    message.reply({ embeds: [embed] });
+  }
 };
 
 client.on('ready', () => {
@@ -52,16 +64,10 @@ client.on('messageCreate', async message => {
     if (message.author.bot || !message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLowerCase();
+    const command = args.shift().toLowerCase();
 
-    const command = commands[commandName];
-    if (command) {
-      const requiredPermission = database.permissions[commandName] || 'USER';
-      if (hasPermission(message.member, requiredPermission)) {
-        command.execute(message);
-      } else {
-        message.reply("You don't have permission to use this command.");
-      }
+    if (commands[command]) {
+      commands[command](message);
     } else {
       message.reply("Command not found. Type '!help' to see available commands.");
     }
@@ -70,11 +76,5 @@ client.on('messageCreate', async message => {
     message.reply('Sorry, an error occurred while processing your command.');
   }
 });
-
-function hasPermission(member, requiredPermission) {
-  // Check if the member has the required permission role
-  // You need to implement this based on your role structure
-  return member.roles.cache.some(role => role.name === requiredPermission);
-}
 
 client.login('YOUR_BOT_TOKEN');
