@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -7,36 +7,74 @@ const client = new Client({
   ]
 });
 
+const prefix = '!';
+
+// Simulated database (replace with an actual database)
+const database = {
+  // Example of storing command permissions
+  permissions: {
+    'rules': ['ADMINISTRATOR', 'MODERATOR'],
+    'kick': ['ADMINISTRATOR'],
+    // Add more commands and their required permissions as needed
+  }
+};
+
+// Command handler
+const commands = {
+  'rules': {
+    permission: 'USER', // Default permission
+    execute: message => {
+      const embed = new MessageEmbed()
+        .setTitle('Server Rules')
+        .setDescription('Here are the server rules:')
+        .addField('1. Be respectful', 'Be respectful to other members.')
+        .addField('2. No spam', 'Do not spam in the server.')
+        .addField('3. No NSFW content', 'Keep the server safe for everyone.')
+        .setColor('#0099ff');
+      message.reply({ embeds: [embed] });
+    }
+  },
+  'kick': {
+    permission: 'ADMINISTRATOR',
+    execute: message => {
+      // Implementation of kick command
+    }
+  },
+  // Add more commands here
+};
+
 client.on('ready', () => {
   console.log(`Bot is ready as: ${client.user.tag}!`);
 });
 
-client.on('messageCreate', message => {
-  // Ignore bot's own messages
-  if (message.author.bot) return;
+client.on('messageCreate', async message => {
+  try {
+    if (message.author.bot || !message.content.startsWith(prefix)) return;
 
-  const content = message.content.trim().toLowerCase();
-  if (content === 'rules') {
-    message.reply('😃 1. Be cool, kind, and respectful to one another.\n📇 2. Keep your Discord profile appropriate.\n✉️ 3. Do not spam.\n🔔 4. Do not @mention or direct message the staff. See Mods below in the channel for exceptions.\n📣 5. No self-promotion or advertisements.\n🛡️ 6. No personal information.\n🤬 7. No hate speech or harmful language.\n🏛️ 8. No political or religious topics.\n🚨 9. No piracy, sexual, NSFW, or otherwise suspicious content.\n🤔 10. Rules are subject to common sense.');
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+
+    const command = commands[commandName];
+    if (command) {
+      const requiredPermission = database.permissions[commandName] || 'USER';
+      if (hasPermission(message.member, requiredPermission)) {
+        command.execute(message);
+      } else {
+        message.reply("You don't have permission to use this command.");
+      }
+    } else {
+      message.reply("Command not found. Type '!help' to see available commands.");
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    message.reply('Sorry, an error occurred while processing your command.');
   }
-  if (content === 'hi'|| content === 'hello') {
-    message.reply("Hi 😃 This is SAINI's Bot");
-  }
-  if (content === 'good morning' || content === 'gm') {
-    message.reply("Good Morning🌅");
-  }
-  if (content === 'good night' || content === 'gn') {
-    message.reply("Good Night🌃");
-  }
-  if (content === 'good afternoon' || content === 'ga') {
-    message.reply("Good Afternoon");
-  }
-  if (content === 'how are you'|| content === 'hru') {
-    message.reply("I'm good! What about you ?");
-  }
-  if (content === 'bye'|| content === 'bie') {
-    message.reply("Bye! Have a good day");
-  }  
 });
 
-client.login(YOUR_BOT_TOKEN_HERE');
+function hasPermission(member, requiredPermission) {
+  // Check if the member has the required permission role
+  // You need to implement this based on your role structure
+  return member.roles.cache.some(role => role.name === requiredPermission);
+}
+
+client.login('YOUR_BOT_TOKEN');
