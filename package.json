@@ -1,15 +1,15 @@
 {
-  "name": "discord-bot",
+  "name": "MetaMingle",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A Discord bot",
+  "main": "bot/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "discord.js": "^14.0.0",
+    "dotenv": "^16.0.0",
+    "node-fetch": "^3.3.2"
   }
 }
