@@ -33,8 +33,8 @@ Before running the bot, ensure you have the following installed:
    First, clone the project to your local machine:
 
    ```
-   git clone https://github.com/your-username/discord-bot.git
-   cd discord-bot
+   git clone https://github.com/saini-gk/MetaMingle.git
+   cd MetaMingle
    ```
 2. **Install dependencies**:
 
